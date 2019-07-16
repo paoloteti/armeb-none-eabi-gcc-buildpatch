@@ -1,0 +1,379 @@
+--- gcc-arm-none-eabi-8-2019-q3-update/build-toolchain.sh	2019-07-04 04:19:47.000000000 +0200
++++ /home/paolo/gcc-build/gcc-arm-none-eabi-8-2019-q3-update/build-toolchain.sh	2019-07-15 18:01:03.768500729 +0200
+@@ -220,7 +220,7 @@
+     --disable-gdb \
+     --enable-interwork \
+     --enable-plugins \
+-    --with-sysroot=$INSTALLDIR_NATIVE/arm-none-eabi \
++    --with-sysroot=$INSTALLDIR_NATIVE/armeb-none-eabi \
+     "--with-pkgversion=$PKGVERSION"
+ 
+ if [ "x$DEBUG_BUILD_OPTIONS" != "x" ] ; then
+@@ -267,10 +267,11 @@
+     --disable-tls \
+     --with-newlib \
+     --without-headers \
++    --with-endian=big \
+     --with-gnu-as \
+     --with-gnu-ld \
+-    --with-python-dir=share/gcc-arm-none-eabi \
+-    --with-sysroot=$INSTALLDIR_NATIVE/arm-none-eabi \
++    --with-python-dir=share/gcc-armeb-none-eabi \
++    --with-sysroot=$INSTALLDIR_NATIVE/armeb-none-eabi \
+     ${GCC_CONFIG_OPTS}                              \
+     "${GCC_CONFIG_OPTS_LCPP}"                              \
+     "--with-pkgversion=$PKGVERSION" \
+@@ -283,7 +284,7 @@
+ popd
+ 
+ pushd $INSTALLDIR_NATIVE
+-rm -rf bin/arm-none-eabi-gccbug
++rm -rf bin/armeb-none-eabi-gccbug
+ rm -rf ./lib/libiberty.a
+ rm -rf  include
+ popd
+@@ -291,7 +292,7 @@
+ echo Task [III-2] /$HOST_NATIVE/newlib/
+ saveenv
+ prepend_path PATH $INSTALLDIR_NATIVE/bin
+-saveenvvar CFLAGS_FOR_TARGET '-g -O2 -ffunction-sections -fdata-sections'
++saveenvvar CFLAGS_FOR_TARGET '-g -O2 -ffunction-sections -fdata-sections -mbig-endian'
+ rm -rf $BUILDDIR_NATIVE/newlib && mkdir -p $BUILDDIR_NATIVE/newlib
+ pushd $BUILDDIR_NATIVE/newlib
+ 
+@@ -317,13 +318,13 @@
+ if [ "x$skip_manual" != "xyes" ]; then
+ make pdf
+ mkdir -p $INSTALLDIR_NATIVE_DOC/pdf
+-cp $BUILDDIR_NATIVE/newlib/arm-none-eabi/newlib/libc/libc.pdf $INSTALLDIR_NATIVE_DOC/pdf/libc.pdf
+-cp $BUILDDIR_NATIVE/newlib/arm-none-eabi/newlib/libm/libm.pdf $INSTALLDIR_NATIVE_DOC/pdf/libm.pdf
++cp $BUILDDIR_NATIVE/newlib/armeb-none-eabi/newlib/libc/libc.pdf $INSTALLDIR_NATIVE_DOC/pdf/libc.pdf
++cp $BUILDDIR_NATIVE/newlib/armeb-none-eabi/newlib/libm/libm.pdf $INSTALLDIR_NATIVE_DOC/pdf/libm.pdf
+ 
+ make html
+ mkdir -p $INSTALLDIR_NATIVE_DOC/html
+-copy_dir $BUILDDIR_NATIVE/newlib/arm-none-eabi/newlib/libc/libc.html $INSTALLDIR_NATIVE_DOC/html/libc
+-copy_dir $BUILDDIR_NATIVE/newlib/arm-none-eabi/newlib/libm/libm.html $INSTALLDIR_NATIVE_DOC/html/libm
++copy_dir $BUILDDIR_NATIVE/newlib/armeb-none-eabi/newlib/libc/libc.html $INSTALLDIR_NATIVE_DOC/html/libc
++copy_dir $BUILDDIR_NATIVE/newlib/armeb-none-eabi/newlib/libm/libm.html $INSTALLDIR_NATIVE_DOC/html/libm
+ fi
+ 
+ popd
+@@ -332,7 +333,7 @@
+ echo Task [III-3] /$HOST_NATIVE/newlib-nano/
+ saveenv
+ prepend_path PATH $INSTALLDIR_NATIVE/bin
+-saveenvvar CFLAGS_FOR_TARGET '-g -Os -ffunction-sections -fdata-sections'
++saveenvvar CFLAGS_FOR_TARGET '-g -Os -ffunction-sections -fdata-sections -mbig-endian'
+ rm -rf $BUILDDIR_NATIVE/newlib-nano && mkdir -p $BUILDDIR_NATIVE/newlib-nano
+ pushd $BUILDDIR_NATIVE/newlib-nano
+ 
+@@ -360,8 +361,8 @@
+ restoreenv
+ 
+ echo Task [III-4] /$HOST_NATIVE/gcc-final/
+-rm -f $INSTALLDIR_NATIVE/arm-none-eabi/usr
+-ln -s . $INSTALLDIR_NATIVE/arm-none-eabi/usr
++rm -f $INSTALLDIR_NATIVE/armeb-none-eabi/usr
++ln -s . $INSTALLDIR_NATIVE/armeb-none-eabi/usr
+ 
+ rm -rf $BUILDDIR_NATIVE/gcc-final && mkdir -p $BUILDDIR_NATIVE/gcc-final
+ pushd $BUILDDIR_NATIVE/gcc-final
+@@ -386,12 +387,13 @@
+     --disable-shared \
+     --disable-threads \
+     --disable-tls \
++    --with-endian=big \
+     --with-gnu-as \
+     --with-gnu-ld \
+     --with-newlib \
+     --with-headers=yes \
+-    --with-python-dir=share/gcc-arm-none-eabi \
+-    --with-sysroot=$INSTALLDIR_NATIVE/arm-none-eabi \
++    --with-python-dir=share/gcc-armeb-none-eabi \
++    --with-sysroot=$INSTALLDIR_NATIVE/armeb-none-eabi \
+     $GCC_CONFIG_OPTS                                \
+     "${GCC_CONFIG_OPTS_LCPP}"                              \
+     "--with-pkgversion=$PKGVERSION" \
+@@ -415,8 +417,8 @@
+ fi
+ 
+ pushd $INSTALLDIR_NATIVE
+-rm -rf bin/arm-none-eabi-gccbug
+-LIBIBERTY_LIBRARIES=`find $INSTALLDIR_NATIVE/arm-none-eabi/lib -name libiberty.a`
++rm -rf bin/armeb-none-eabi-gccbug
++LIBIBERTY_LIBRARIES=`find $INSTALLDIR_NATIVE/armeb-none-eabi/lib -name libiberty.a`
+ for libiberty_lib in $LIBIBERTY_LIBRARIES ; do
+     rm -rf $libiberty_lib
+ done
+@@ -424,12 +426,12 @@
+ rm -rf  include
+ popd
+ 
+-rm -f $INSTALLDIR_NATIVE/arm-none-eabi/usr
++rm -f $INSTALLDIR_NATIVE/armeb-none-eabi/usr
+ popd
+ 
+ echo Task [III-5] /$HOST_NATIVE/gcc-size-libstdcxx/
+-rm -f $BUILDDIR_NATIVE/target-libs/arm-none-eabi/usr
+-ln -s . $BUILDDIR_NATIVE/target-libs/arm-none-eabi/usr
++rm -f $BUILDDIR_NATIVE/target-libs/armeb-none-eabi/usr
++ln -s . $BUILDDIR_NATIVE/target-libs/armeb-none-eabi/usr
+ 
+ rm -rf $BUILDDIR_NATIVE/gcc-size-libstdcxx && mkdir -p $BUILDDIR_NATIVE/gcc-size-libstdcxx
+ pushd $BUILDDIR_NATIVE/gcc-size-libstdcxx
+@@ -449,12 +451,13 @@
+     --disable-shared \
+     --disable-threads \
+     --disable-tls \
++    --with-endian=big \
+     --with-gnu-as \
+     --with-gnu-ld \
+     --with-newlib \
+     --with-headers=yes \
+-    --with-python-dir=share/gcc-arm-none-eabi \
+-    --with-sysroot=$BUILDDIR_NATIVE/target-libs/arm-none-eabi \
++    --with-python-dir=share/gcc-armeb-none-eabi \
++    --with-sysroot=$BUILDDIR_NATIVE/target-libs/armeb-none-eabi \
+     $GCC_CONFIG_OPTS \
+     "${GCC_CONFIG_OPTS_LCPP}"                              \
+     "--with-pkgversion=$PKGVERSION" \
+@@ -463,15 +466,15 @@
+ make -j$JOBS CXXFLAGS="${CXXFLAGS:-}" CXXFLAGS_FOR_TARGET="-g -Os -ffunction-sections -fdata-sections -fno-exceptions"
+ make install
+ 
+-copy_multi_libs src_prefix="$BUILDDIR_NATIVE/target-libs/arm-none-eabi/lib" \
+-                dst_prefix="$INSTALLDIR_NATIVE/arm-none-eabi/lib"           \
+-                target_gcc="$BUILDDIR_NATIVE/target-libs/bin/arm-none-eabi-gcc"
++copy_multi_libs src_prefix="$BUILDDIR_NATIVE/target-libs/armeb-none-eabi/lib" \
++                dst_prefix="$INSTALLDIR_NATIVE/armeb-none-eabi/lib"           \
++                target_gcc="$BUILDDIR_NATIVE/target-libs/bin/armeb-none-eabi-gcc"
+ 
+ # Copy the nano configured newlib.h file into the location that nano.specs
+ # expects it to be.
+-mkdir -p $INSTALLDIR_NATIVE/arm-none-eabi/include/newlib-nano
+-cp -f $BUILDDIR_NATIVE/target-libs/arm-none-eabi/include/newlib.h \
+-      $INSTALLDIR_NATIVE/arm-none-eabi/include/newlib-nano/newlib.h
++mkdir -p $INSTALLDIR_NATIVE/armeb-none-eabi/include/newlib-nano
++cp -f $BUILDDIR_NATIVE/target-libs/armeb-none-eabi/include/newlib.h \
++      $INSTALLDIR_NATIVE/armeb-none-eabi/include/newlib-nano/newlib.h
+ 
+ popd
+ 
+@@ -502,10 +505,10 @@
+ 	    --disable-gprof \
+ 	    --with-libexpat \
+ 	    --with-lzma=no \
+-	    --with-system-gdbinit=$INSTALLDIR_NATIVE/$HOST_NATIVE/arm-none-eabi/lib/gdbinit \
++	    --with-system-gdbinit=$INSTALLDIR_NATIVE/$HOST_NATIVE/armeb-none-eabi/lib/gdbinit \
+ 	    $GDB_CONFIG_OPTS \
+ 	    $GDB_EXTRA_CONFIG_OPTS \
+-	    '--with-gdb-datadir='\''${prefix}'\''/arm-none-eabi/share/gdb' \
++	    '--with-gdb-datadir='\''${prefix}'\''/armeb-none-eabi/share/gdb' \
+ 	    "--with-pkgversion=$PKGVERSION"
+ 
+ 	if [ "x$DEBUG_BUILD_OPTIONS" != "x" ] ; then
+@@ -560,20 +563,20 @@
+ 
+ echo Task [III-9] /$HOST_NATIVE/strip_host_objects/
+ if [ "x$DEBUG_BUILD_OPTIONS" = "x" ] ; then
+-    STRIP_BINARIES=`find $INSTALLDIR_NATIVE/bin/ -name arm-none-eabi-\*`
++    STRIP_BINARIES=`find $INSTALLDIR_NATIVE/bin/ -name armeb-none-eabi-\*`
+     for bin in $STRIP_BINARIES ; do
+         strip_binary strip $bin
+     done
+ 
+-    STRIP_BINARIES=`find $INSTALLDIR_NATIVE/arm-none-eabi/bin/ -maxdepth 1 -mindepth 1 -name \*`
++    STRIP_BINARIES=`find $INSTALLDIR_NATIVE/armeb-none-eabi/bin/ -maxdepth 1 -mindepth 1 -name \*`
+     for bin in $STRIP_BINARIES ; do
+         strip_binary strip $bin
+     done
+ 
+     if [ "x$BUILD" == "xx86_64-apple-darwin10" ]; then
+-        STRIP_BINARIES=`find $INSTALLDIR_NATIVE/lib/gcc/arm-none-eabi/$GCC_VER/ -maxdepth 1 -name \* -perm +111 -and ! -type d`
++        STRIP_BINARIES=`find $INSTALLDIR_NATIVE/lib/gcc/armeb-none-eabi/$GCC_VER/ -maxdepth 1 -name \* -perm +111 -and ! -type d`
+     else
+-        STRIP_BINARIES=`find $INSTALLDIR_NATIVE/lib/gcc/arm-none-eabi/$GCC_VER/ -maxdepth 1 -name \* -perm /111 -and ! -type d`
++        STRIP_BINARIES=`find $INSTALLDIR_NATIVE/lib/gcc/armeb-none-eabi/$GCC_VER/ -maxdepth 1 -name \* -perm /111 -and ! -type d`
+     fi
+     for bin in $STRIP_BINARIES ; do
+         strip_binary strip $bin
+@@ -583,24 +586,24 @@
+ echo Task [III-10] /$HOST_NATIVE/strip_target_objects/
+ saveenv
+ prepend_path PATH $INSTALLDIR_NATIVE/bin
+-TARGET_LIBRARIES=`find $INSTALLDIR_NATIVE/arm-none-eabi/lib -name \*.a`
++TARGET_LIBRARIES=`find $INSTALLDIR_NATIVE/armeb-none-eabi/lib -name \*.a`
+ for target_lib in $TARGET_LIBRARIES ; do
+-    arm-none-eabi-objcopy -R .comment -R .note -R .debug_info -R .debug_aranges -R .debug_pubnames -R .debug_pubtypes -R .debug_abbrev -R .debug_line -R .debug_str -R .debug_ranges -R .debug_loc $target_lib || true
++    armeb-none-eabi-objcopy -R .comment -R .note -R .debug_info -R .debug_aranges -R .debug_pubnames -R .debug_pubtypes -R .debug_abbrev -R .debug_line -R .debug_str -R .debug_ranges -R .debug_loc $target_lib || true
+ done
+ 
+-TARGET_OBJECTS=`find $INSTALLDIR_NATIVE/arm-none-eabi/lib -name \*.o`
++TARGET_OBJECTS=`find $INSTALLDIR_NATIVE/armeb-none-eabi/lib -name \*.o`
+ for target_obj in $TARGET_OBJECTS ; do
+-    arm-none-eabi-objcopy -R .comment -R .note -R .debug_info -R .debug_aranges -R .debug_pubnames -R .debug_pubtypes -R .debug_abbrev -R .debug_line -R .debug_str -R .debug_ranges -R .debug_loc $target_obj || true
++    armeb-none-eabi-objcopy -R .comment -R .note -R .debug_info -R .debug_aranges -R .debug_pubnames -R .debug_pubtypes -R .debug_abbrev -R .debug_line -R .debug_str -R .debug_ranges -R .debug_loc $target_obj || true
+ done
+ 
+-TARGET_LIBRARIES=`find $INSTALLDIR_NATIVE/lib/gcc/arm-none-eabi/$GCC_VER -name \*.a`
++TARGET_LIBRARIES=`find $INSTALLDIR_NATIVE/lib/gcc/armeb-none-eabi/$GCC_VER -name \*.a`
+ for target_lib in $TARGET_LIBRARIES ; do
+-    arm-none-eabi-objcopy -R .comment -R .note -R .debug_info -R .debug_aranges -R .debug_pubnames -R .debug_pubtypes -R .debug_abbrev -R .debug_line -R .debug_str -R .debug_ranges -R .debug_loc $target_lib || true
++    armeb-none-eabi-objcopy -R .comment -R .note -R .debug_info -R .debug_aranges -R .debug_pubnames -R .debug_pubtypes -R .debug_abbrev -R .debug_line -R .debug_str -R .debug_ranges -R .debug_loc $target_lib || true
+ done
+ 
+-TARGET_OBJECTS=`find $INSTALLDIR_NATIVE/lib/gcc/arm-none-eabi/$GCC_VER -name \*.o`
++TARGET_OBJECTS=`find $INSTALLDIR_NATIVE/lib/gcc/armeb-none-eabi/$GCC_VER -name \*.o`
+ for target_obj in $TARGET_OBJECTS ; do
+-    arm-none-eabi-objcopy -R .comment -R .note -R .debug_info -R .debug_aranges -R .debug_pubnames -R .debug_pubtypes -R .debug_abbrev -R .debug_line -R .debug_str -R .debug_ranges -R .debug_loc $target_obj || true
++    armeb-none-eabi-objcopy -R .comment -R .note -R .debug_info -R .debug_aranges -R .debug_pubnames -R .debug_pubtypes -R .debug_abbrev -R .debug_line -R .debug_str -R .debug_ranges -R .debug_loc $target_obj || true
+ done
+ restoreenv
+ 
+@@ -617,7 +620,7 @@
+ cp $ROOT/$LICENSE_FILE $INSTALLDIR_NATIVE_DOC/
+ 
+ # Copy the samples from src to make the final package.
+-copy_dir_clean $SRCDIR/$SAMPLES $INSTALLDIR_NATIVE/share/gcc-arm-none-eabi/$SAMPLES
++copy_dir_clean $SRCDIR/$SAMPLES $INSTALLDIR_NATIVE/share/gcc-armeb-none-eabi/$SAMPLES
+ 
+ # Cleanup any pre-existing state.
+ rm -f $PACKAGEDIR/$PACKAGE_NAME_NATIVE.tar.bz2
+@@ -633,7 +636,7 @@
+     --group=0                               \
+     --exclude=host-$HOST_NATIVE             \
+     --exclude=host-$HOST_MINGW              \
+-    $INSTALL_PACKAGE_NAME/arm-none-eabi     \
++    $INSTALL_PACKAGE_NAME/armeb-none-eabi     \
+     $INSTALL_PACKAGE_NAME/bin               \
+     $INSTALL_PACKAGE_NAME/lib               \
+     $INSTALL_PACKAGE_NAME/share
+@@ -682,7 +685,7 @@
+     --disable-sim \
+     --disable-gdb \
+     --enable-plugins \
+-    --with-sysroot=$INSTALLDIR_MINGW/arm-none-eabi \
++    --with-sysroot=$INSTALLDIR_MINGW/armeb-none-eabi \
+     "--with-pkgversion=$PKGVERSION"
+ 
+ if [ "x$DEBUG_BUILD_OPTIONS" != "x" ] ; then
+@@ -706,13 +709,13 @@
+ 
+ echo Task [IV-2] /$HOST_MINGW/copy_libs/
+ if [ "x$skip_manual" != "xyes" ]; then
+-copy_dir $BUILDDIR_MINGW/tools-$OBJ_SUFFIX_NATIVE/share/doc/gcc-arm-none-eabi/html $INSTALLDIR_MINGW_DOC/html
+-copy_dir $BUILDDIR_MINGW/tools-$OBJ_SUFFIX_NATIVE/share/doc/gcc-arm-none-eabi/pdf $INSTALLDIR_MINGW_DOC/pdf
++copy_dir $BUILDDIR_MINGW/tools-$OBJ_SUFFIX_NATIVE/share/doc/gcc-armeb-none-eabi/html $INSTALLDIR_MINGW_DOC/html
++copy_dir $BUILDDIR_MINGW/tools-$OBJ_SUFFIX_NATIVE/share/doc/gcc-armeb-none-eabi/pdf $INSTALLDIR_MINGW_DOC/pdf
+ fi
+-copy_dir $BUILDDIR_MINGW/tools-$OBJ_SUFFIX_NATIVE/arm-none-eabi/lib $INSTALLDIR_MINGW/arm-none-eabi/lib
+-copy_dir $BUILDDIR_MINGW/tools-$OBJ_SUFFIX_NATIVE/arm-none-eabi/include $INSTALLDIR_MINGW/arm-none-eabi/include
+-copy_dir $BUILDDIR_MINGW/tools-$OBJ_SUFFIX_NATIVE/arm-none-eabi/include/c++ $INSTALLDIR_MINGW/arm-none-eabi/include/c++
+-copy_dir $BUILDDIR_MINGW/tools-$OBJ_SUFFIX_NATIVE/lib/gcc/arm-none-eabi $INSTALLDIR_MINGW/lib/gcc/arm-none-eabi
++copy_dir $BUILDDIR_MINGW/tools-$OBJ_SUFFIX_NATIVE/armeb-none-eabi/lib $INSTALLDIR_MINGW/armeb-none-eabi/lib
++copy_dir $BUILDDIR_MINGW/tools-$OBJ_SUFFIX_NATIVE/armeb-none-eabi/include $INSTALLDIR_MINGW/armeb-none-eabi/include
++copy_dir $BUILDDIR_MINGW/tools-$OBJ_SUFFIX_NATIVE/armeb-none-eabi/include/c++ $INSTALLDIR_MINGW/armeb-none-eabi/include/c++
++copy_dir $BUILDDIR_MINGW/tools-$OBJ_SUFFIX_NATIVE/lib/gcc/armeb-none-eabi $INSTALLDIR_MINGW/lib/gcc/armeb-none-eabi
+ 
+ echo Task [IV-3] /$HOST_MINGW/gcc-final/
+ saveenv
+@@ -724,7 +727,7 @@
+ saveenvvar GCC_FOR_TARGET $TARGET-gcc
+ saveenvvar CXX_FOR_TARGET $TARGET-g++
+ 
+-pushd $INSTALLDIR_MINGW/arm-none-eabi/
++pushd $INSTALLDIR_MINGW/armeb-none-eabi/
+ rm -f usr
+ ln -s . usr
+ popd
+@@ -750,12 +753,13 @@
+     --disable-shared \
+     --disable-threads \
+     --disable-tls \
++    --with-endian=big \
+     --with-gnu-as \
+     --with-gnu-ld \
+     --with-headers=yes \
+     --with-newlib \
+-    --with-python-dir=share/gcc-arm-none-eabi \
+-    --with-sysroot=$INSTALLDIR_MINGW/arm-none-eabi \
++    --with-python-dir=share/gcc-armeb-none-eabi \
++    --with-sysroot=$INSTALLDIR_MINGW/armeb-none-eabi \
+     --with-libiconv-prefix=$BUILDDIR_MINGW/host-libs/usr \
+     --with-gmp=$BUILDDIR_MINGW/host-libs/usr \
+     --with-mpfr=$BUILDDIR_MINGW/host-libs/usr \
+@@ -780,13 +784,13 @@
+ popd
+ 
+ pushd $INSTALLDIR_MINGW
+-rm -rf bin/arm-none-eabi-gccbug
++rm -rf bin/armeb-none-eabi-gccbug
+ rm -rf  include
+ popd
+ 
+-copy_dir $BUILDDIR_MINGW/tools-$OBJ_SUFFIX_NATIVE/lib/gcc/arm-none-eabi $INSTALLDIR_MINGW/lib/gcc/arm-none-eabi
+-rm -rf $INSTALLDIR_MINGW/arm-none-eabi/usr
+-rm -rf $INSTALLDIR_MINGW/lib/gcc/arm-none-eabi/*/plugin
++copy_dir $BUILDDIR_MINGW/tools-$OBJ_SUFFIX_NATIVE/lib/gcc/armeb-none-eabi $INSTALLDIR_MINGW/lib/gcc/armeb-none-eabi
++rm -rf $INSTALLDIR_MINGW/armeb-none-eabi/usr
++rm -rf $INSTALLDIR_MINGW/lib/gcc/armeb-none-eabi/*/plugin
+ find $INSTALLDIR_MINGW -executable -and -not -type d -and -not -name \*.exe \
+   -and -not -name liblto_plugin-0.dll -exec rm -f \{\} \;
+ restoreenv
+@@ -820,8 +824,8 @@
+ 	    --with-libexpat \
+ 	    --with-libexpat-prefix=$BUILDDIR_MINGW/host-libs/usr \
+ 	    --with-libiconv-prefix=$BUILDDIR_MINGW/host-libs/usr \
+-	    --with-system-gdbinit=$INSTALLDIR_MINGW/$HOST_MINGW/arm-none-eabi/lib/gdbinit \
+-	    '--with-gdb-datadir='\''${prefix}'\''/arm-none-eabi/share/gdb' \
++	    --with-system-gdbinit=$INSTALLDIR_MINGW/$HOST_MINGW/armeb-none-eabi/lib/gdbinit \
++	    '--with-gdb-datadir='\''${prefix}'\''/armeb-none-eabi/share/gdb' \
+ 	    "--with-pkgversion=$PKGVERSION"
+ 
+ 	if [ "x$DEBUG_BUILD_OPTIONS" != "x" ] ; then
+@@ -855,18 +859,18 @@
+ find $INSTALLDIR_MINGW -name '*.la' -exec rm '{}' ';'
+ 
+ echo Task [IV-6] /$HOST_MINGW/strip_host_objects/
+-STRIP_BINARIES=`find $INSTALLDIR_MINGW/bin/ -name arm-none-eabi-\*.exe`
++STRIP_BINARIES=`find $INSTALLDIR_MINGW/bin/ -name armeb-none-eabi-\*.exe`
+ if [ "x$DEBUG_BUILD_OPTIONS" = "x" ] ; then
+     for bin in $STRIP_BINARIES ; do
+         strip_binary $HOST_MINGW_TOOL-strip $bin
+     done
+ 
+-    STRIP_BINARIES=`find $INSTALLDIR_MINGW/arm-none-eabi/bin/ -maxdepth 1 -mindepth 1 -name \*.exe`
++    STRIP_BINARIES=`find $INSTALLDIR_MINGW/armeb-none-eabi/bin/ -maxdepth 1 -mindepth 1 -name \*.exe`
+     for bin in $STRIP_BINARIES ; do
+         strip_binary $HOST_MINGW_TOOL-strip $bin
+     done
+ 
+-    STRIP_BINARIES=`find $INSTALLDIR_MINGW/lib/gcc/arm-none-eabi/$GCC_VER/ -name \*.exe`
++    STRIP_BINARIES=`find $INSTALLDIR_MINGW/lib/gcc/armeb-none-eabi/$GCC_VER/ -name \*.exe`
+     for bin in $STRIP_BINARIES ; do
+         strip_binary $HOST_MINGW_TOOL-strip $bin
+     done
+@@ -879,11 +883,11 @@
+ cp $ROOT/$RELEASE_FILE $INSTALLDIR_MINGW_DOC/
+ cp $ROOT/$README_FILE $INSTALLDIR_MINGW_DOC/
+ cp $ROOT/$LICENSE_FILE $INSTALLDIR_MINGW_DOC/
+-copy_dir_clean $SRCDIR/$SAMPLES $INSTALLDIR_MINGW/share/gcc-arm-none-eabi/$SAMPLES
++copy_dir_clean $SRCDIR/$SAMPLES $INSTALLDIR_MINGW/share/gcc-armeb-none-eabi/$SAMPLES
+ flip -m $INSTALLDIR_MINGW_DOC/$RELEASE_FILE
+ flip -m $INSTALLDIR_MINGW_DOC/$README_FILE
+ flip -m -b $INSTALLDIR_MINGW_DOC/$LICENSE_FILE
+-flip -m $INSTALLDIR_MINGW/share/gcc-arm-none-eabi/$SAMPLES_DOS_FILES
++flip -m $INSTALLDIR_MINGW/share/gcc-armeb-none-eabi/$SAMPLES_DOS_FILES
+ rm -rf $INSTALLDIR_MINGW/include
+ ln -s $INSTALLDIR_MINGW $INSTALL_PACKAGE_NAME
+ 
+@@ -897,7 +901,7 @@
+          -DInstallDirBase="$INSTALLBASE"   \
+          -DInstallDirVer="$GCC_VER_SHORT $RELEASEVER" \
+          "-XOutFile $SRCDIR/$INSTALLATION/output/$PACKAGE_NAME_MINGW.exe"    \
+-         $SRCDIR/$INSTALLATION/arm-none-eabi-gnu-tools.nsi
++         $SRCDIR/$INSTALLATION/armeb-none-eabi-gnu-tools.nsi
+ 
+ cp -rf $SRCDIR/$INSTALLATION/output/$PACKAGE_NAME_MINGW.exe $PACKAGEDIR/
+ rm -f $INSTALL_PACKAGE_NAME

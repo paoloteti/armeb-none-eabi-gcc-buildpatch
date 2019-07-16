@@ -1,0 +1,23 @@
+--- gcc-arm-none-eabi-8-2019-q3-update/build-common.sh	2019-07-04 04:19:47.000000000 +0200
++++ /home/paolo/gcc-build/gcc-arm-none-eabi-8-2019-q3-update/build-common.sh	2019-07-15 18:00:59.837092970 +0200
+@@ -248,9 +248,9 @@
+ BUILDDIR_NATIVE=$ROOT/build-native
+ BUILDDIR_MINGW=$ROOT/build-mingw
+ INSTALLDIR_NATIVE=$ROOT/install-native
+-INSTALLDIR_NATIVE_DOC=$ROOT/install-native/share/doc/gcc-arm-none-eabi
++INSTALLDIR_NATIVE_DOC=$ROOT/install-native/share/doc/gcc-armeb-none-eabi
+ INSTALLDIR_MINGW=$ROOT/install-mingw
+-INSTALLDIR_MINGW_DOC=$ROOT/install-mingw/share/doc/gcc-arm-none-eabi
++INSTALLDIR_MINGW_DOC=$ROOT/install-mingw/share/doc/gcc-armeb-none-eabi
+ 
+ PACKAGEDIR=$ROOT/pkg
+ 
+@@ -380,7 +380,7 @@
+     GCC_VER_SHORT=$GCC_VER_NAME
+     HOST_MINGW=i686-w64-mingw32
+     HOST_MINGW_TOOL=i686-w64-mingw32
+-    TARGET=arm-none-eabi
++    TARGET=armeb-none-eabi
+     ENV_CFLAGS=
+     ENV_CPPFLAGS=
+     ENV_LDFLAGS=
